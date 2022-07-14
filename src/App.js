@@ -1,23 +1,40 @@
-import logo from './logo.svg';
 import './App.css';
+import Spinner from './components/Spinner';
+import React, { useState, useEffect } from "react";
+import Axios from "axios";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [image, setImage] = useState(null);
+  const [isImageShown, setIsImageShown] = useState(false);
+
+  // Add the effect in the function body
+  useEffect(() => {
+
+    setTimeout(() => { setIsLoading(false); }, 2000);
+
+  }, []);
+
+  useEffect(() => {
+    if(!isLoading) {
+      getPicture()
+    }    
+  }, [isLoading]);
+
+  const getPicture = () => {
+    Axios.get('https://picsum.photos/seed/picsum/1920/800')
+      .then(response => {
+        setImage(response.config.url)
+      })
+      .catch(err => console.log(err))
+  }
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {isLoading && <Spinner />}
+      {image && <button onClick={() => setIsImageShown(true)}>VER FOTO</button>}
+      {isImageShown && <img src={image} />}
     </div>
   );
 }
